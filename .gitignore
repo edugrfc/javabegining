@@ -1,1 +1,3 @@
 *.class
+/edu_awt/EduAwtHello/nbproject/private/
+/edu_awt/EduAwtHello/build/

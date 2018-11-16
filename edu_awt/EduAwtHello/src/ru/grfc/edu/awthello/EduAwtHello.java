@@ -1,21 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package ru.grfc.edu.awthello;
+  
+import java.awt.*;
 
-/**
- *
- * @author Насоновы
- */
-public class EduAwtHello {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+public class project {
+    
+    
+    public static void main(String [] Args){
+    
+    
+    Frame frame = new Frame("Random Frame");
+    frame.addWindowListener(new MyController(frame));
+    frame.setSize(300, 300);
+    
+    frame.add(new MyCanvas(frame));
+    
+    frame.setVisible(true);
+    
     }
+    
+    
     
 }

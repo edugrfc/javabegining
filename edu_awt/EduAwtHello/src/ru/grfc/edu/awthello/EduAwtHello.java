@@ -32,6 +32,7 @@ public class EduAwtHello {
 
     public static class MyCanvas extends Canvas {
 
+        @Override
         public void paint(Graphics g) {
             int width = getWidth();
             int height = getHeight();

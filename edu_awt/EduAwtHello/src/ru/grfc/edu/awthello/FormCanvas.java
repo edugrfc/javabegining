@@ -37,15 +37,5 @@ class FormCanvas extends Canvas {
         int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
         int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
         g.drawString(text, x, y);
-
-        // ruler
-        g.setColor(Color.MAGENTA);
-        int y2 = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
-        g.setFont(new Font(fontName, 0, 10));
-        for (int i = 1; i < 10; i++) {
-            int x2 = (rect.width+1)/(10) * i;
-            g.drawLine(x2, y2, x2, y2+10);
-        }
-
     }
 }

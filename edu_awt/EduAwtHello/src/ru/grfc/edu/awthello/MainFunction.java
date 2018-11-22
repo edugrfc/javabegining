@@ -10,8 +10,6 @@ public class MainFunction {
         frame.addWindowListener(new MyController(frame));
         frame.setSize(500, 500);
 
-
-        
         frame.add(new ExibitionCanvas(frame));
 
         frame.setVisible(true);

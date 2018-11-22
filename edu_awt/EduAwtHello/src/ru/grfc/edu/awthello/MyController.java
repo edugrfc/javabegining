@@ -1,16 +1,13 @@
 package ru.grfc.edu.awthello;
+
 import java.awt.event.*;
 import java.awt.*;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
  *
  * @author mada
  */
+//simple controller function for frames, closes window after [x] button is pressed
 public class MyController extends WindowAdapter {
 
     Frame frame;

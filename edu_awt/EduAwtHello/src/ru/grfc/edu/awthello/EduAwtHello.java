@@ -4,7 +4,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 
-public class Hw1Canvas {
+public class EduAwtHello {
 
     public static void main(String args[]) {
         Frame f = new MainWindow("HW1 Canvas");

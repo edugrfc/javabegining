@@ -1,3 +1,5 @@
+package ru.grfc.edu.awthello;
+
 import java.awt.*;
 
 class FormCanvas extends Canvas {

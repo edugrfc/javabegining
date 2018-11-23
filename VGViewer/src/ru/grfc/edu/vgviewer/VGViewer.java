@@ -5,8 +5,11 @@
  */
 package ru.grfc.edu.vgviewer;
 
+import java.awt.Frame;
+
 /**
  * Главный класс для запуска вьювера векторной графики
+ *
  * @author nag
  */
 public class VGViewer {
@@ -16,6 +19,13 @@ public class VGViewer {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        Frame frame = new Frame("Random Frame");
+        frame.addWindowListener(new MyController(frame));
+        frame.setSize(500, 500);
+
+        frame.add(new ExibitionCanvas(frame));
+
+        frame.setVisible(true);
     }
-    
+
 }

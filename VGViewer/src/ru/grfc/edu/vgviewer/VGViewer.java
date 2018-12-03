@@ -37,7 +37,7 @@ public class VGViewer {
         Frame f = new MainWindow("VGViewer");
         f.setLayout(new BorderLayout());
 
-        ViewerCanvas canvas = new ViewerCanvas();        
+        ViewerCanvas canvas = new ViewerCanvas();
         canvas.setFigures(figuresToPrint);
 
         Panel topPanel = new Panel();
@@ -53,15 +53,16 @@ public class VGViewer {
 
         TextField imputParamTextField = new TextField();
         imputParamTextField.setColumns(40);
-         
+
         choiceFigure.addItemListener((ItemEvent e) -> {
             String figureName = choiceFigure.getSelectedItem();
             FigureEnum figureEnum = getFigureElement(figureName);
-            if(figureEnum != null)        
+            if (figureEnum != null) {
                 imputParamTextField.setText(figureEnum.getTemplate());
-        });          
+            }
+        });
         choiceFigure.getItemListeners()[0].itemStateChanged(null);
-                
+
         topLeftPanel.add(choiceFigureLabel);
         topLeftPanel.add(choiceFigure);
         topLeftPanel.add(imputParamTextField);

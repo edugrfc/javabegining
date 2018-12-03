@@ -22,31 +22,15 @@ public class FigureParams {
     private int fx;
     private int fy;
     private int lx;
-    private int ly;
-
-    public int getLx() {
-        return lx;
-    }
-
-    public int getLy() {
-        return ly;
-    }
+    private int ly;   
     private int aw;
     private int ah;
     private boolean fill;
     private boolean blunt;
     private Color color;
-    private Coordinate firstPoint;
-
-    public Coordinate getLastPoint() {
-        return lastPoint;
-    }
+    private Coordinate firstPoint;   
     private Coordinate lastPoint;
-
-    public Coordinate getFirstPoint() {
-        return firstPoint;
-    }
-
+        
     public int getW() {
         return w;
     }
@@ -70,6 +54,14 @@ public class FigureParams {
     public int getAh() {
         return ah;
     }
+    
+    public int getLx() {
+        return lx;
+    }
+
+    public int getLy() {
+        return ly;
+    }
 
     public boolean isFill() {
         return fill;
@@ -81,6 +73,13 @@ public class FigureParams {
 
     public Color getColor() {
         return color;
+    }
+    
+    public Coordinate getLastPoint() {
+        return lastPoint;
+    }
+    public Coordinate getFirstPoint() {
+        return firstPoint;
     }
 
     public FigureParams(String parametrs) {

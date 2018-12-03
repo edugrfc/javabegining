@@ -17,36 +17,31 @@ import ru.grfc.edu.vgviewer.figures.Rectangle;
 import ru.grfc.edu.vgviewer.figures.Rhombus;
 import ru.grfc.edu.vgviewer.figures.RoundRectangle;
 
-
 /**
  *
  * @author win
  */
 public class NormalFigureFactory {
-    public static Figure getFigure(FigureEnum figureType, String parametrs){
-        if(figureType == null || parametrs == null || parametrs.isEmpty()){            
+
+    public static Figure getFigure(FigureEnum figureType, String parametrs) {
+        if (figureType == null || parametrs == null || parametrs.isEmpty()) {
             return null;
         }
         FigureParams params = new FigureParams(parametrs);
-                
-        if(figureType == FigureEnum.ELLIPSE){
+
+        if (figureType == FigureEnum.ELLIPSE) {
             return new Ellipse(params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
-        }
-        else if(figureType == FigureEnum.LINE){
+        } else if (figureType == FigureEnum.LINE) {
             return new Line(params.getFirstPoint(), params.getLastPoint(), params.getColor());
-        }
-        else if(figureType == FigureEnum.PARALLELOGRAM){
+        } else if (figureType == FigureEnum.PARALLELOGRAM) {
             return new Parallelogram(params.isBlunt(), params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
-        }
-        else if(figureType == FigureEnum.RECTANGLE){
+        } else if (figureType == FigureEnum.RECTANGLE) {
             return new Rectangle(params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
-        }
-        else if(figureType == FigureEnum.RHOMBUS){
+        } else if (figureType == FigureEnum.RHOMBUS) {
             return new Rhombus(params.getW(), params.getFirstPoint(), params.getColor(), params.isFill());
-        }
-        else if(figureType == FigureEnum.ROUND_RECTAGLE){
+        } else if (figureType == FigureEnum.ROUND_RECTAGLE) {
             return new RoundRectangle(params.getW(), params.getH(), params.getAw(), params.getAh(), params.getFirstPoint(), params.getColor(), params.isFill());
-        }                                       
+        }
         return null;
     }
 }

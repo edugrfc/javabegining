@@ -15,16 +15,18 @@ import java.awt.event.WindowListener;
  * @author win
  */
 public class MainWindow extends Frame {
-        public MainWindow(String formTitle) {
-            this.setTitle(formTitle);
-            WindowListener listener = new MainWindowListener();
-            addWindowListener(listener);
-        }
 
-        private class MainWindowListener extends WindowAdapter {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        }               
+    public MainWindow(String formTitle) {
+        this.setTitle(formTitle);
+        WindowListener listener = new MainWindowListener();
+        addWindowListener(listener);
     }
+
+    private class MainWindowListener extends WindowAdapter {
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            dispose();
+        }
+    }
+}

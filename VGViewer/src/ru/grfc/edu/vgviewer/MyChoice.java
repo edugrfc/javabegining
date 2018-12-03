@@ -11,6 +11,7 @@ import java.awt.Choice;
  *
  * @author mada
  */
+//селектор с выбором фигур
 public class MyChoice extends Choice {
 
     MyChoice() {

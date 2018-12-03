@@ -1,10 +1,15 @@
 package ru.grfc.edu.vgviewer;
 
+import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.TextField;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -24,7 +29,12 @@ import ru.grfc.edu.vgviewer.figures.RoundRectangle;
 public class VGViewer {
 
     public static void main(String[] args) {
+
+        
+        ArrayList<Figure> figures = new ArrayList();
+
         Frame frame = new Frame();
+        frame.setLayout(new BorderLayout());
         frame.setSize(500, 500);
         frame.addWindowListener(new WindowAdapter() {
             @Override
@@ -32,18 +42,23 @@ public class VGViewer {
                 frame.dispose();
             }
         });
+        
+        Panel panel = new Panel(new FlowLayout(FlowLayout.LEFT));
+        MyCanvas canvas = new MyCanvas(figures);
+        MyChoice choice = new MyChoice();
+        TextField text = new TextField(20);
+        MyButton button = new MyButton("Добавить", choice, text, figures, canvas);
+        MyLabel label = new MyLabel(" ", choice, text, button, frame);
 
-        MyCanvas canvas = new MyCanvas();
-        frame.add(canvas);
+        panel.add(choice);
+        panel.add(text);
+        panel.add(label);
+        panel.add(button);
+
+        frame.add(panel, BorderLayout.NORTH);
+        frame.add(canvas, BorderLayout.CENTER);
         frame.setVisible(true);
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                ArrayList<Figure> figures = generateFigures();
-                canvas.setFigures(figures);
-                canvas.repaint();
-            }
-        });
+        
     }
 
     private static class MyCanvas extends Canvas {
@@ -56,11 +71,17 @@ public class VGViewer {
 
         @Override
         public void paint(Graphics g) {
-            int width = getWidth();
-            int height = getHeight();
+            super.paint(g);
             for (Figure figure : figures) {
                 figure.draw(g);
             }
+        }
+
+        MyCanvas(ArrayList<Figure> list) {
+
+            super();
+            this.figures = list;
+
         }
     }
 

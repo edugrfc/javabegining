@@ -76,14 +76,16 @@ public class VGViewer {
                 String figureName = choiceFigure.getSelectedItem();
                 FigureEnum figureEnum = getFigureElement(figureName);
                 Figure figure = NormalFigureFactory.getFigure(figureEnum, imputParamTextField.getText());
-                figuresToPrint.add(figure);
-                EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        canvas.setFigures(figuresToPrint);
-                        canvas.repaint();
-                    }
-                });
+                if(figure != null){
+                    figuresToPrint.add(figure);
+                    EventQueue.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            canvas.setFigures(figuresToPrint);
+                            canvas.repaint();
+                        }
+                    });
+                }
             }
         });
         topRigthPanel.add(addFigureButton);

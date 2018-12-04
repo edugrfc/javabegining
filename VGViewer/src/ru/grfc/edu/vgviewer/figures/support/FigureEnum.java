@@ -11,22 +11,22 @@ package ru.grfc.edu.vgviewer.figures.support;
  */
 public enum FigureEnum {
     ELLIPSE("Элипс",
-            "w=20 h=20 fx=10 fy=10 color=RED fill=1",
+            "w=20 h=20 fx=10 fy=10 color=RED fill=true",
             "w=\\d{1,4}\\s+h=\\d{1,4}\\s+fx=\\d{1,4}\\s+fy=\\d{1,4}\\s+color=[RED]\\s+fill=[1|0]"),
     LINE("Линия",
             "fx=20 fy=20 lx=10 ly=10 color=RED",
             "fx=\\d{1,4}\\s+fy=\\d{1,4}\\s+lx=\\d{1,4}\\s+ly=\\d{1,4}\\s+color=[RED]"),
     PARALLELOGRAM("Параллелограмм",
-            "blunt=1 w=20 h=20 fx=10 fy=10 color=RED fill=1",
+            "blunt=1 w=20 h=20 fx=10 fy=10 color=RED fill=true",
             "fill=[1|0]\\s+w=\\d{1,4}\\s+h=\\d{1,4}\\s+fx=\\d{1,4}\\s+fy=\\d{1,4}\\s+color=[RED]\\s+fill=[1|0]"),
     RECTANGLE("Прямоугольник",
-            "w=20 h=20 fx=10 fy=10 color=RED fill=1",
+            "w=20 h=20 fx=10 fy=10 color=RED fill=true",
             "w=\\d{1,4}\\s+h=\\d{1,4}\\s+fx=\\d{1,4}\\s+fy=\\d{1,4}\\s+color=[RED]\\s+fill=[1|0]"),
     RHOMBUS("Ромб",
-            "w=20 fx=10 fy=10 color=RED fill=1",
+            "w=20 fx=10 fy=10 color=RED fill=true",
             "w=\\d{1,4}\\s+fx=\\d{1,4}\\s+fy=\\d{1,4}\\s+color=[RED]\\s+fill=[1|0]"),
     ROUND_RECTAGLE("Закруглённый прямоугольник",
-            "w=200 h=200 aw=30 ah=30 fx=10 fy=10 color=RED fill=1",
+            "w=200 h=200 aw=30 ah=30 fx=10 fy=10 color=RED fill=true",
             "w=\\d{1,4}\\s+h=\\d{1,4}\\s+aw=d{1,4}\\s+ah=d{1,4}\\s+fx=\\d{1,4}\\s+fy=\\d{1,4}\\s+color=[RED]\\s+fill=[1|0]");
 
     private final String name;

@@ -6,11 +6,11 @@ package ru.grfc.edu.vgviewer.figures.support;
  */
 public enum FigureEnum {
     ELLIPSE("Элипс",
-            "w=20 h=20 fx=10 fy=10 color=RED fill=true",
+            "w=20 h=20 fx=10 fy=10 color=#FFCCFF fill=true",
             "^w=\\d{1,4}\\s+h=\\d{1,4}\\s+fx=\\d{1,4}\\s+fy=\\d{1,4}\\s+color="
                     // Название цвета
             + "((RED)|(BLUE)|(GREEN)|(YELLOW)|(BLACK)|" 
-                    // Формат записи цвета #C6A6F6
+                    // Формат записи цвета #C6A6F6 или #FFCCFF
             + "(#?([a-f\\d]{3}|[a-f\\d]{6}))|" 
                     // Формат записи цвета rgb(255,255,255) - простое регулярное выражение, полноценное длинное
             + "rgb\\((\\d{1,3}),(\\d{1,3}),(\\d{1,3})\\))" 

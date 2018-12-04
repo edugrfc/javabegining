@@ -1,36 +1,35 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ru.grfc.edu.vgviewer.figures.support;
 
 import java.awt.Color;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import ru.grfc.edu.vgviewer.figures.Coordinate;
 
 /**
  *
- * @author win
+ * @author gsv
  */
 public class FigureParams {
+
+    private final static String PRIMITIVE_RGB_REGEXP = "rgb\\((\\d{1,3}),\\s*(\\d{1,3}),\\s*(\\d{1,3})\\)";
 
     private int w;
     private int h;
     private int fx;
     private int fy;
     private int lx;
-    private int ly;   
+    private int ly;
     private int aw;
     private int ah;
     private boolean fill;
     private boolean blunt;
     private Color color;
-    private Coordinate firstPoint;   
+    private Coordinate firstPoint;
     private Coordinate lastPoint;
-        
+
     public int getW() {
         return w;
     }
@@ -54,7 +53,7 @@ public class FigureParams {
     public int getAh() {
         return ah;
     }
-    
+
     public int getLx() {
         return lx;
     }
@@ -74,15 +73,22 @@ public class FigureParams {
     public Color getColor() {
         return color;
     }
-    
+
     public Coordinate getLastPoint() {
         return lastPoint;
     }
+
     public Coordinate getFirstPoint() {
         return firstPoint;
     }
 
-    public FigureParams(String parametrs) {
+    public FigureParams(FigureEnum figureType, String parametrs) throws Exception {
+        Pattern pattern = Pattern.compile(figureType.getRegExp(), Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(parametrs);
+        if (!matcher.matches()) {
+            throw new Exception("Can't parse parametrs string");
+        }
+
         String[] keyValuePairs = parametrs.split(" ");
         Map<String, String> mapParams = new HashMap<>();
         for (String pair : keyValuePairs) {
@@ -139,9 +145,20 @@ public class FigureParams {
     }
 
     private static Color stringToColor(final String value) {
-        if (value == null) {
+        if (value == null || value.isEmpty()) {
             return Color.black;
         }
+
+        // Формат rgb(255,255,255)
+        Pattern pattern = Pattern.compile(PRIMITIVE_RGB_REGEXP, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(value);
+        if (matcher.matches()) {
+            int r = Integer.valueOf(matcher.group(1));
+            int g = Integer.valueOf(matcher.group(2));
+            int b = Integer.valueOf(matcher.group(3));
+            return new Color(r, g, b);
+        }
+
         try {
             return Color.decode(value);
         } catch (NumberFormatException nfe) {

@@ -1,14 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ru.grfc.edu.vgviewer.figures.support;
 
-import java.awt.Color;
-import java.util.HashMap;
-import java.util.Map;
-import ru.grfc.edu.vgviewer.figures.Coordinate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import ru.grfc.edu.vgviewer.figures.Ellipse;
 import ru.grfc.edu.vgviewer.figures.Figure;
 import ru.grfc.edu.vgviewer.figures.Line;
@@ -19,16 +12,23 @@ import ru.grfc.edu.vgviewer.figures.RoundRectangle;
 
 /**
  *
- * @author win
+ * @author gsv
  */
 public class NormalFigureFactory {
+    private NormalFigureFactory(){};
 
     public static Figure getFigure(FigureEnum figureType, String parametrs) {
         if (figureType == null || parametrs == null || parametrs.isEmpty()) {
             return null;
         }
-        FigureParams params = new FigureParams(parametrs);
-
+        FigureParams params = null;
+        try {
+            params = new FigureParams(figureType, parametrs);
+        } catch (Exception ex) {
+            Logger.getLogger(NormalFigureFactory.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        
         if (figureType == FigureEnum.ELLIPSE) {
             return new Ellipse(params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
         } else if (figureType == FigureEnum.LINE) {

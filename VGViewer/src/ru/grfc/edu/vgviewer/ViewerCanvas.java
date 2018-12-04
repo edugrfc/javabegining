@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ru.grfc.edu.vgviewer;
 
 import java.awt.*;
@@ -11,7 +6,7 @@ import ru.grfc.edu.vgviewer.figures.Figure;
 
 /**
  *
- * @author win
+ * @author gsv
  */
 public class ViewerCanvas extends Canvas {
 

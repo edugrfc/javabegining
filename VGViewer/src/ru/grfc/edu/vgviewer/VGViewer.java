@@ -1,133 +1,108 @@
 package ru.grfc.edu.vgviewer;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
-import ru.grfc.edu.vgviewer.figures.Coordinate;
+import java.util.List;
 import ru.grfc.edu.vgviewer.figures.Figure;
-import ru.grfc.edu.vgviewer.figures.Line;
-import ru.grfc.edu.vgviewer.figures.Parallelogram;
-import ru.grfc.edu.vgviewer.figures.Rectangle;
-import ru.grfc.edu.vgviewer.figures.Rhombus;
-import ru.grfc.edu.vgviewer.figures.RoundRectangle;
+import ru.grfc.edu.vgviewer.figures.support.FigureEnum;
+import ru.grfc.edu.vgviewer.figures.support.NormalFigureFactory;
 
 /**
  * Главный класс для запуска вьювера векторной графики
  *
- * @author dds
+ * @author gsv
  */
 public class VGViewer {
 
     public static void main(String[] args) {
-        Frame frame = new Frame();
-        frame.setSize(500, 500);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                frame.dispose();
-            }
-        });
-
-        MyCanvas canvas = new MyCanvas();
-        frame.add(canvas);
-        frame.setVisible(true);
         EventQueue.invokeLater(new Runnable() {
-            @Override
             public void run() {
-                ArrayList<Figure> figures = generateFigures();
-                canvas.setFigures(figures);
-                canvas.repaint();
+                VGViewer vGViewer = new VGViewer();
             }
         });
     }
 
-    private static class MyCanvas extends Canvas {
+    public VGViewer() {
+        List<Figure> figuresToPrint = new ArrayList<>();
+        Frame f = new MainWindow("VGViewer");
+        f.setLayout(new BorderLayout());
 
-        private ArrayList<Figure> figures;
+        // Для центральной части
+        ViewerCanvas canvas = new ViewerCanvas();
+        canvas.setFigures(figuresToPrint);
 
-        public void setFigures(ArrayList<Figure> figures) {
-            this.figures = figures;
+        // Для левой верхней панели
+        Label choiceFigureLabel = new Label("Выбор фигруры:");
+        Choice choiceFigure = new Choice();
+        for (FigureEnum value : FigureEnum.values()) {
+            choiceFigure.add(value.toString());
         }
+        TextField imputParamTextField = new TextField();
+        imputParamTextField.setColumns(40);
+        choiceFigure.addItemListener((ItemEvent e) -> {
+            String figureName = choiceFigure.getSelectedItem();
+            FigureEnum figureEnum = getFigureEnumElement(figureName);
+            if (figureEnum != null) {
+                imputParamTextField.setText(figureEnum.getTemplate());
+            } else {
+                imputParamTextField.setText("Для выбора нет данных");
+            }
 
-        @Override
-        public void paint(Graphics g) {
-            int width = getWidth();
-            int height = getHeight();
-            for (Figure figure : figures) {
-                figure.draw(g);
+        });
+        choiceFigure.getItemListeners()[0].itemStateChanged(null);
+
+        // Для правой верхней панели
+        Button addFigureButton = new Button("Добавить");
+        addFigureButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String figureName = choiceFigure.getSelectedItem();
+                FigureEnum figureEnum = getFigureEnumElement(figureName);
+                Figure figure = NormalFigureFactory.getFigure(figureEnum, imputParamTextField.getText());
+                if (figure != null) {
+                    figuresToPrint.add(figure);
+                    EventQueue.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            canvas.setFigures(figuresToPrint);
+                            canvas.repaint();
+                        }
+                    });
+                }
+            }
+        });
+
+        Panel topLeftPanel = new Panel();
+        topLeftPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        topLeftPanel.add(choiceFigureLabel);
+        topLeftPanel.add(choiceFigure);
+        topLeftPanel.add(imputParamTextField);
+
+        Panel topRigthPanel = new Panel();
+        topRigthPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        topRigthPanel.add(addFigureButton);
+
+        Panel topPanel = new Panel();
+        topPanel.setLayout(new BorderLayout());
+        topPanel.add(topLeftPanel, BorderLayout.WEST);
+        topPanel.add(topRigthPanel, BorderLayout.EAST);
+
+        f.add(topPanel, BorderLayout.NORTH);
+        f.add(canvas, BorderLayout.CENTER);
+        f.setSize(800, 500);
+        f.setVisible(true);
+    }
+
+    private FigureEnum getFigureEnumElement(String figureName) {
+        FigureEnum figureEnum = null;
+        for (FigureEnum value : FigureEnum.values()) {
+            if (value.equalsName(figureName)) {
+                figureEnum = value;
             }
         }
+        return figureEnum;
     }
-
-    private static ArrayList<Figure> generateFigures() {
-
-        ArrayList<Figure> figures = new ArrayList<>();
-        int width = 300;
-
-        //для примера нарисуем что-то похожее на блок-схему
-        //терминатор начала
-        RoundRectangle rr = new RoundRectangle(70, 30, 20, 20,
-                new Coordinate((width / 2) - 30, 10), Color.RED, false);
-        figures.add(rr);
-        Line line1 = new Line(new Coordinate(rr.getFirstPoint().getX() + rr.getWidth() / 2,
-                10 + rr.getHeight()), new Coordinate(rr.getFirstPoint().getX() + rr.getWidth() / 2,
-                10 + rr.getHeight() + 30), Color.red);
-        figures.add(line1);
-
-        //блок ввода
-        Parallelogram p = new Parallelogram(true, rr.getWidth(), rr.getHeight(),
-                new Coordinate(rr.getFirstPoint().getX() + rr.getWidth() / 10,
-                        line1.getLastPoint().getY()), Color.red, false);
-        figures.add(p);
-        Line line2 = new Line(new Coordinate(line1.getFirstPoint().getX(),
-                line1.getLastPoint().getY() + p.getHeight()),
-                new Coordinate(line1.getFirstPoint().getX(),
-                        line1.getLastPoint().getY() + p.getHeight() + 30), Color.red);
-        figures.add(line2);
-
-        //блок операций
-        Rectangle r = new Rectangle(rr.getWidth(), rr.getHeight(),
-                new Coordinate(rr.getFirstPoint().getX(), line2.getLastPoint().getY()),
-                Color.red, false);
-        figures.add(r);
-        Line line3 = new Line(new Coordinate(line1.getFirstPoint().getX(),
-                line2.getLastPoint().getY() + r.getHeight()),
-                new Coordinate(line1.getFirstPoint().getX(),
-                        line2.getLastPoint().getY() + r.getHeight() + 30), Color.red);
-        figures.add(line3);
-
-        //блок ветвления, но само ветвление не рисуем
-        Rhombus rb = new Rhombus(r.getWidth(), new Coordinate(line3.getLastPoint().getX(),
-                line3.getLastPoint().getY()), Color.red, false);
-        figures.add(rb);
-        Line line4 = new Line(new Coordinate(line1.getFirstPoint().getX(),
-                line3.getLastPoint().getY() + rb.getWidth() / 2),
-                new Coordinate(line1.getFirstPoint().getX(),
-                        line3.getLastPoint().getY() + rb.getWidth() / 2 + 30), Color.red);
-        figures.add(line4);
-
-        //блок операций
-        Rectangle r2 = new Rectangle(rr.getWidth(), rr.getHeight(),
-                new Coordinate(rr.getFirstPoint().getX(), line4.getLastPoint().getY()),
-                Color.red, false);
-        figures.add(r2);
-        Line line5 = new Line(new Coordinate(line1.getFirstPoint().getX(),
-                line4.getLastPoint().getY() + r2.getHeight()),
-                new Coordinate(line1.getFirstPoint().getX(),
-                        line4.getLastPoint().getY() + r2.getHeight() + 30), Color.red);
-        figures.add(line5);
-
-        //терминатор конца
-        RoundRectangle rr2 = new RoundRectangle(rr.getWidth(), rr.getHeight(), rr.getArcHeight(), rr.getArcWidth(),
-                new Coordinate(rr.getFirstPoint().getX(), line5.getLastPoint().getY()), Color.RED, false);
-        figures.add(rr2);
-
-        return figures;
-    }
-
 }

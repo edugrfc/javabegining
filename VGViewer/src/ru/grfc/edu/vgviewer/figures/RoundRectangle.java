@@ -10,7 +10,7 @@ import java.awt.Graphics;
  *
  * @author dds
  */
-public class RoundRectangle extends Rectangle {
+public class RoundRectangle extends RectangleFig {
 
     //ширина эллипса
     private int arcWidth;

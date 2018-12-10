@@ -10,7 +10,7 @@ import java.awt.Graphics;
  *
  * @author dds
  */
-public class Rectangle extends Figure {
+public class RectangleFig extends Figure {
 
     //ширина
     int width;
@@ -18,7 +18,7 @@ public class Rectangle extends Figure {
     //высота
     int height;
 
-    public Rectangle(int width, int height, Coordinate firstPoint, Color color, boolean fill) {
+    public RectangleFig(int width, int height, Coordinate firstPoint, Color color, boolean fill) {
         super(firstPoint, color, fill);
         this.width = width;
         this.height = height;

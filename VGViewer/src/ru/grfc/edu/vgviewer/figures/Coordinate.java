@@ -5,7 +5,7 @@ package ru.grfc.edu.vgviewer.figures;
  *
  * @author dds
  */
-public class Coordinate {
+public class Coordinate implements java.io.Serializable {
 
     private int x;
     private int y;

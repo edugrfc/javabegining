@@ -12,7 +12,7 @@ import java.awt.geom.Rectangle2D;
  *
  * @author dds
  */
-public class Rhombus extends Rectangle {
+public class Rhombus extends RectangleFig {
 
     public Rhombus(int width, Coordinate firstPoint, Color color, boolean fill) {
         //у ромба стороны равны

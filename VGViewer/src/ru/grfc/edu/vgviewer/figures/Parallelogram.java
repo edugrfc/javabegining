@@ -10,7 +10,7 @@ import java.awt.Graphics;
  *
  * @author dds
  */
-public class Parallelogram extends Rectangle {
+public class Parallelogram extends RectangleFig {
 
     //тупой или острый левый верхний угол, true - тупой
     private boolean isBlunt;

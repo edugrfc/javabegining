@@ -29,6 +29,7 @@ public class FigureParams {
     private Color color;
     private Coordinate firstPoint;
     private Coordinate lastPoint;
+    private String labelText;
 
     public int getW() {
         return w;
@@ -82,6 +83,10 @@ public class FigureParams {
         return firstPoint;
     }
 
+    public String getLabelText() {
+        return labelText;
+    }
+
     public FigureParams(FigureEnum figureType, String parametrs) throws Exception {
         Pattern pattern = Pattern.compile(figureType.getRegExp(), Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(parametrs);
@@ -133,6 +138,11 @@ public class FigureParams {
         }
         try {
             blunt = Boolean.valueOf(mapParams.get("blunt"));
+        } catch (Exception e) {
+        }
+        try {
+            if(mapParams.get("label") != null)
+                labelText = String.valueOf(mapParams.get("label"));
         } catch (Exception e) {
         }
         try {

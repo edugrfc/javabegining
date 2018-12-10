@@ -8,7 +8,7 @@ import java.awt.Graphics;
  *
  * @author dds
  */
-abstract public class Figure {
+abstract public class Figure implements java.io.Serializable {
 
     //начальная координата фигуры (левый верххний угол)
     Coordinate firstPoint;
@@ -31,6 +31,10 @@ abstract public class Figure {
 
     public Color getColor() {
         return color;
+    }
+
+    public boolean isFill() {
+        return fill;
     }
 
     //метод, который отрисовывает фигуру

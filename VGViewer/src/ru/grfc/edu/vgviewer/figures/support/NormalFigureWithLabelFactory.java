@@ -3,6 +3,7 @@ package ru.grfc.edu.vgviewer.figures.support;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ru.grfc.edu.vgviewer.figures.Ellipse;
+import ru.grfc.edu.vgviewer.figures.EllipseWithLabel;
 import ru.grfc.edu.vgviewer.figures.Figure;
 import ru.grfc.edu.vgviewer.figures.Line;
 import ru.grfc.edu.vgviewer.figures.Parallelogram;
@@ -14,8 +15,8 @@ import ru.grfc.edu.vgviewer.figures.RoundRectangle;
  *
  * @author gsv
  */
-public class NormalFigureFactory {
-    private NormalFigureFactory(){};
+public class NormalFigureWithLabelFactory {
+    private NormalFigureWithLabelFactory(){};
 
     public static Figure getFigure(FigureEnum figureType, String parametrs) {
         if (figureType == null || parametrs == null || parametrs.isEmpty()) {
@@ -25,12 +26,12 @@ public class NormalFigureFactory {
         try {
             params = new FigureParams(figureType, parametrs);
         } catch (Exception ex) {
-            Logger.getLogger(NormalFigureFactory.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NormalFigureWithLabelFactory.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
         
         if (figureType == FigureEnum.ELLIPSE) {
-            return new Ellipse(params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new EllipseWithLabel(params);
         } else if (figureType == FigureEnum.LINE) {
             return new Line(params.getFirstPoint(), params.getLastPoint(), params.getColor());
         } else if (figureType == FigureEnum.PARALLELOGRAM) {

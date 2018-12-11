@@ -27,7 +27,7 @@ public enum FigureEnum {
             + "((RED)|(BLUE)|(GREEN)|(YELLOW)|(BLACK)|"
             + "(#?([a-f\\d]{3}|[a-f\\d]{6}))|"
             + "rgb\\((\\d{1,3}),(\\d{1,3}),(\\d{1,3})\\))"
-            + "\\s+fill=((true)|(false))$"),
+            + "\\s+fill=((true)|(false))(\\s+label=.*)?$"),
     RECTANGLE("Прямоугольник",
             "w=20 h=20 fx=10 fy=10 color=RED fill=false",
             "^w=\\d{1,4}\\s+h=\\d{1,4}\\s+fx=\\d{1,4}\\s+fy=\\d{1,4}\\s+color="            

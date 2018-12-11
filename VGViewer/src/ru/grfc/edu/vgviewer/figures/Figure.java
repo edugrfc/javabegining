@@ -42,5 +42,5 @@ abstract public class Figure implements java.io.Serializable {
 
     //имя фигуры
     public abstract String getName();
-
+        
 }

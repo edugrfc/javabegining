@@ -1,28 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ru.grfc.edu.vgviewer.figures;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import ru.grfc.edu.vgviewer.figures.support.FigureParams;
 
-
 /**
+ * Прямоугольник
+ *
+ * Блок операций для блок-схем
  *
  * @author gsv
  */
-public class EllipseWithLabel extends Ellipse{
+public class RectangleFigWithLabel extends RectangleFig {
     private String labelText;
-    
-    public EllipseWithLabel(FigureParams params) {       
+
+    public RectangleFigWithLabel(FigureParams params) {              
         super(params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
         this.labelText = params.getLabelText();
-    }    
-    
+    }
+           
     @Override
     public void draw(Graphics g) {
         super.draw(g);        
@@ -33,5 +29,5 @@ public class EllipseWithLabel extends Ellipse{
         if(text == null || text.isEmpty())
             return ;                   
         g.drawString(text, x, y);
-    }
+    }   
 }

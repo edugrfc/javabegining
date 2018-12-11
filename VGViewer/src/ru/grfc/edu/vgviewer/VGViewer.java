@@ -174,20 +174,22 @@ public class VGViewer {
                 fg.setVisible(true);
                 String dataFile = fg.getDirectory() + fg.getFile();
                 
-                figuresToPrint.clear();
-                
+                List<Figure> newFigList = new ArrayList<>();               
                 try ( FileInputStream fileInputStream = new FileInputStream(dataFile);
                       BufferedInputStream buf = new BufferedInputStream(fileInputStream);                        
                         ObjectInputStream in = new ObjectInputStream(buf);) {                                     
                         while (true) {
                             Figure fig = (Figure) in.readObject();       
-                            figuresToPrint.add(fig);                            
+                            newFigList.add(fig);                            
                         }                    
                 } catch (IOException ex) {
                     Logger.getLogger(VGViewer.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(VGViewer.class.getName()).log(Level.SEVERE, null, ex);
                 } 
+                figuresToPrint.clear(); 
+                figuresToPrint.addAll(newFigList);
+                
                 if(figuresToPrint == null || figuresToPrint.isEmpty())
                     return ;
                 EventQueue.invokeLater(new Runnable() {

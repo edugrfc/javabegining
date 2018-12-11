@@ -2,14 +2,7 @@ package ru.grfc.edu.vgviewer.figures.support;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import ru.grfc.edu.vgviewer.figures.Ellipse;
-import ru.grfc.edu.vgviewer.figures.EllipseWithLabel;
-import ru.grfc.edu.vgviewer.figures.Figure;
-import ru.grfc.edu.vgviewer.figures.Line;
-import ru.grfc.edu.vgviewer.figures.Parallelogram;
-import ru.grfc.edu.vgviewer.figures.RectangleFig;
-import ru.grfc.edu.vgviewer.figures.Rhombus;
-import ru.grfc.edu.vgviewer.figures.RoundRectangle;
+import ru.grfc.edu.vgviewer.figures.*;
 
 /**
  *
@@ -33,15 +26,15 @@ public class NormalFigureWithLabelFactory {
         if (figureType == FigureEnum.ELLIPSE) {
             return new EllipseWithLabel(params);
         } else if (figureType == FigureEnum.LINE) {
-            return new Line(params.getFirstPoint(), params.getLastPoint(), params.getColor());
+            return new LineWithLabel(params);
         } else if (figureType == FigureEnum.PARALLELOGRAM) {
-            return new Parallelogram(params.isBlunt(), params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new ParallelogramWithLabel(params);
         } else if (figureType == FigureEnum.RECTANGLE) {
-            return new RectangleFig(params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new RectangleFigWithLabel(params);
         } else if (figureType == FigureEnum.RHOMBUS) {
-            return new Rhombus(params.getW(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new RhombusWithLabel(params);
         } else if (figureType == FigureEnum.ROUND_RECTAGLE) {
-            return new RoundRectangle(params.getW(), params.getH(), params.getAw(), params.getAh(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new RoundRectangleWithLabel(params);
         }
         return null;
     }

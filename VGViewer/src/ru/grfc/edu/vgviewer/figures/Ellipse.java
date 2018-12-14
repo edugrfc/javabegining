@@ -2,6 +2,8 @@ package ru.grfc.edu.vgviewer.figures;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Эллипс, круг
@@ -46,6 +48,15 @@ public class Ellipse extends Figure {
     @Override
     public String getName() {
         return width == height ? "Круг" : "Эллипс";
+    }
+    
+    @Override
+    public Map<String, Object> getFigureParameters(){
+        Map<String, Object> mapParams = super.getFigureParameters();
+        mapParams.put("width", this.width);
+        mapParams.put("height", this.height);
+        mapParams.put("name", getName());                
+        return mapParams;
     }
 
 }

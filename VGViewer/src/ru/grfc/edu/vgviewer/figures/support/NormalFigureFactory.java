@@ -14,33 +14,32 @@ import ru.grfc.edu.vgviewer.figures.RoundRectangle;
  *
  * @author gsv
  */
-public class NormalFigureFactory {
-    private NormalFigureFactory(){};
-
-    public static Figure getFigure(FigureEnum figureType, String parametrs) {
+public class NormalFigureFactory implements FigureFactory {    
+    
+    public Figure getFigure(FigureEnum figureType, String parametrs) {
         if (figureType == null || parametrs == null || parametrs.isEmpty()) {
             return null;
         }
-        FigureParams params = null;
+        FigureParams figureParams = null;
         try {
-            params = new FigureParams(figureType, parametrs);
+            figureParams = new FigureParams(figureType, parametrs);
         } catch (Exception ex) {
             Logger.getLogger(NormalFigureFactory.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
         
         if (figureType == FigureEnum.ELLIPSE) {
-            return new Ellipse(params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new Ellipse(figureParams.getW(), figureParams.getH(), figureParams.getFirstPoint(), figureParams.getColor(), figureParams.isFill());
         } else if (figureType == FigureEnum.LINE) {
-            return new Line(params.getFirstPoint(), params.getLastPoint(), params.getColor());
+            return new Line(figureParams.getFirstPoint(), figureParams.getLastPoint(), figureParams.getColor());
         } else if (figureType == FigureEnum.PARALLELOGRAM) {
-            return new Parallelogram(params.isBlunt(), params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new Parallelogram(figureParams.isBlunt(), figureParams.getW(), figureParams.getH(), figureParams.getFirstPoint(), figureParams.getColor(), figureParams.isFill());
         } else if (figureType == FigureEnum.RECTANGLE) {
-            return new RectangleFig(params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new RectangleFig(figureParams.getW(), figureParams.getH(), figureParams.getFirstPoint(), figureParams.getColor(), figureParams.isFill());
         } else if (figureType == FigureEnum.RHOMBUS) {
-            return new Rhombus(params.getW(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new Rhombus(figureParams.getW(), figureParams.getFirstPoint(), figureParams.getColor(), figureParams.isFill());
         } else if (figureType == FigureEnum.ROUND_RECTAGLE) {
-            return new RoundRectangle(params.getW(), params.getH(), params.getAw(), params.getAh(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new RoundRectangle(figureParams.getW(), figureParams.getH(), figureParams.getAw(), figureParams.getAh(), figureParams.getFirstPoint(), figureParams.getColor(), figureParams.isFill());
         }
         return null;
     }

@@ -8,34 +8,33 @@ import ru.grfc.edu.vgviewer.figures.*;
  *
  * @author gsv
  */
-public class NormalFigureWithLabelFactory {
-    private NormalFigureWithLabelFactory(){};
+public class NormalFigureWithStdLabelFactory implements FigureFactory {   
 
-    public static Figure getFigure(FigureEnum figureType, String parametrs) {
+    public Figure getFigure(FigureEnum figureType, String parametrs) {
         if (figureType == null || parametrs == null || parametrs.isEmpty()) {
             return null;
         }
-        FigureParams params = null;
+        FigureParams figureParams = null;
         try {
-            params = new FigureParams(figureType, parametrs);
+            figureParams = new FigureParams(figureType, parametrs);
         } catch (Exception ex) {
-            Logger.getLogger(NormalFigureWithLabelFactory.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NormalFigureWithStdLabelFactory.class.getName()).log(Level.SEVERE, null, ex);
             return null;
-        }
+        }        
         
         if (figureType == FigureEnum.ELLIPSE) {
-            return new EllipseWithLabel(params);
+            return new EllipseWithLabel(figureParams);
         } else if (figureType == FigureEnum.LINE) {
-            return new LineWithLabel(params);
+            return new LineWithLabel(figureParams);
         } else if (figureType == FigureEnum.PARALLELOGRAM) {
-            return new ParallelogramWithLabel(params);
+            return new ParallelogramWithLabel(figureParams);
         } else if (figureType == FigureEnum.RECTANGLE) {
-            return new RectangleFigWithLabel(params);
+            return new RectangleFigWithLabel(figureParams);
         } else if (figureType == FigureEnum.RHOMBUS) {
-            return new RhombusWithLabel(params);
+            return new RhombusWithLabel(figureParams);
         } else if (figureType == FigureEnum.ROUND_RECTAGLE) {
-            return new RoundRectangleWithLabel(params);
+            return new RoundRectangleWithLabel(figureParams);
         }
         return null;
-    }
+    }    
 }

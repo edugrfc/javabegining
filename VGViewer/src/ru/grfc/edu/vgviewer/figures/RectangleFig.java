@@ -2,6 +2,7 @@ package ru.grfc.edu.vgviewer.figures;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Map;
 
 /**
  * Прямоугольник
@@ -45,6 +46,15 @@ public class RectangleFig extends Figure {
     @Override
     public String getName() {
         return width == height ? "Квадрат" : "Прямоугольник";
+    }
+    
+    @Override
+    public Map<String, Object> getFigureParameters(){
+        Map<String, Object> mapParams = super.getFigureParameters();
+        mapParams.put("width", this.width);      
+        mapParams.put("height", this.height);  
+        mapParams.put("name", getName());                
+        return mapParams;
     }
 
 }

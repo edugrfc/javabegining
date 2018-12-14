@@ -2,6 +2,7 @@ package ru.grfc.edu.vgviewer.figures;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Map;
 
 /**
  * Параллелограм
@@ -51,5 +52,13 @@ public class Parallelogram extends RectangleFig {
     @Override
     public String getName() {
         return "Параллелограм";
+    }
+    
+    @Override
+    public Map<String, Object> getFigureParameters(){
+        Map<String, Object> mapParams = super.getFigureParameters();
+        mapParams.put("isBlunt", this.isBlunt);       
+        mapParams.put("name", getName());                
+        return mapParams;
     }
 }

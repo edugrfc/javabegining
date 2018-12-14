@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.Map;
 import ru.grfc.edu.vgviewer.figures.support.FigureParams;
 
 /**
@@ -18,7 +19,8 @@ public class RhombusWithLabel extends Rhombus {
     
     public RhombusWithLabel(FigureParams params) {              
         super(params.getW(), params.getFirstPoint(), params.getColor(), params.isFill());
-        this.labelText = params.getLabelText();
+        this.labelText = params.getLabelText();    
+        this.figureType = params.getFigureType();
     }
            
     @Override
@@ -31,6 +33,13 @@ public class RhombusWithLabel extends Rhombus {
         if(text == null || text.isEmpty())
             return ;                   
         g.drawString(text, x, y);
-    }           
+    }   
+    
+    @Override
+    public Map<String, Object> getFigureParameters(){
+        Map<String, Object> mapParams = super.getFigureParameters();       
+        mapParams.put("labelText", this.labelText);                
+        return mapParams;
+    }
 
 }

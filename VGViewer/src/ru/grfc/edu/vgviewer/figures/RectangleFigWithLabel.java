@@ -2,6 +2,7 @@ package ru.grfc.edu.vgviewer.figures;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Map;
 import ru.grfc.edu.vgviewer.figures.support.FigureParams;
 
 /**
@@ -16,7 +17,8 @@ public class RectangleFigWithLabel extends RectangleFig {
 
     public RectangleFigWithLabel(FigureParams params) {              
         super(params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
-        this.labelText = params.getLabelText();
+        this.labelText = params.getLabelText();   
+        this.figureType = params.getFigureType();
     }
            
     @Override
@@ -30,4 +32,11 @@ public class RectangleFigWithLabel extends RectangleFig {
             return ;                   
         g.drawString(text, x, y);
     }   
+    
+    @Override
+    public Map<String, Object> getFigureParameters(){
+        Map<String, Object> mapParams = super.getFigureParameters();       
+        mapParams.put("labelText", this.labelText);                
+        return mapParams;
+    }
 }

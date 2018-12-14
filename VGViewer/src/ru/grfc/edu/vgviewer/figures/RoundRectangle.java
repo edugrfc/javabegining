@@ -2,6 +2,7 @@ package ru.grfc.edu.vgviewer.figures;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Map;
 
 /**
  * Прямоугольник с закругленными краями
@@ -48,6 +49,15 @@ public class RoundRectangle extends RectangleFig {
     @Override
     public String getName() {
         return "Прямоугольник с закругленными краями";
+    }
+    
+    @Override
+    public Map<String, Object> getFigureParameters(){
+        Map<String, Object> mapParams = super.getFigureParameters(); 
+        mapParams.put("aw", this.arcWidth); 
+        mapParams.put("ah", this.arcHeight); 
+        mapParams.put("name", getName());                
+        return mapParams;
     }
 
 }

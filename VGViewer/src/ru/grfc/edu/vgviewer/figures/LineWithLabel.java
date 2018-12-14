@@ -2,6 +2,7 @@ package ru.grfc.edu.vgviewer.figures;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Map;
 import ru.grfc.edu.vgviewer.figures.support.FigureParams;
 
 /**
@@ -16,7 +17,8 @@ public class LineWithLabel extends Line {
 
     public LineWithLabel(FigureParams params) {       
         super(params.getFirstPoint(), params.getLastPoint(), params.getColor());
-        this.labelText = params.getLabelText();
+        this.labelText = params.getLabelText();     
+        this.figureType = params.getFigureType();
     }
            
     @Override
@@ -30,4 +32,11 @@ public class LineWithLabel extends Line {
             return ;                   
         g.drawString(text, x, y);
     }        
+    
+    @Override
+    public Map<String, Object> getFigureParameters(){
+        Map<String, Object> mapParams = super.getFigureParameters();       
+        mapParams.put("labelText", this.labelText);                
+        return mapParams;
+    }
 }

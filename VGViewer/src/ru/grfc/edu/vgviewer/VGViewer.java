@@ -12,7 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import ru.grfc.edu.vgviewer.figures.Figure;
 import ru.grfc.edu.vgviewer.figures.support.FigureEnum;
-import ru.grfc.edu.vgviewer.figures.support.NormalFigureWithLabelFactory;
+import ru.grfc.edu.vgviewer.figures.support.FigureParams;
+import ru.grfc.edu.vgviewer.figures.support.NormalFigureWithStdLabelFactory;
 
 /**
  * Главный класс для запуска вьювера векторной графики
@@ -74,7 +75,7 @@ public class VGViewer {
                 if (!inputLabelTextField.getText().isEmpty()) {
                     finalParamStr = finalParamStr + " label=" + inputLabelTextField.getText();
                 }
-                Figure figure = NormalFigureWithLabelFactory.getFigure(figureEnum, finalParamStr);
+                Figure figure = new NormalFigureWithStdLabelFactory().getFigure(figureEnum, finalParamStr);
                 if (figure != null) {
                     figuresToPrint.add(figure);
                     EventQueue.invokeLater(new Runnable() {
@@ -132,9 +133,14 @@ public class VGViewer {
 
                 try (FileWriter outputStream = new FileWriter(file);) {
                     figuresToPrint.stream().forEach(fig -> {
-                        String outStr = "";
-                        //if(fig.)
-                        //outputStream.write(outStr);
+                        try {
+                            String outStr = "";
+                            FigureParams figureParams = new FigureParams(fig.getFigureParameters());
+                            System.out.println(figureParams.getPrintToFileStr());
+                            //outputStream.write(outStr);
+                        } catch (Exception ex) {
+                            Logger.getLogger(VGViewer.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     });
 
                 } catch (IOException ex) {
@@ -162,6 +168,8 @@ public class VGViewer {
         menuItemOpenText.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                
+                
                 FileDialog fg = new FileDialog(f, "Open as text");
                 fg.setVisible(true);
                 String file = fg.getDirectory() + fg.getFile();
@@ -207,12 +215,14 @@ public class VGViewer {
     }
 
     private FigureEnum getFigureEnumElement(String figureName) {
-        FigureEnum figureEnum = null;
+        if(figureName == null || figureName.isEmpty())
+            return null;
+        FigureEnum figureType = null;
         for (FigureEnum value : FigureEnum.values()) {
             if (value.equalsName(figureName)) {
-                figureEnum = value;
+                figureType = value;
             }
         }
-        return figureEnum;
+        return figureType;
     }
 }

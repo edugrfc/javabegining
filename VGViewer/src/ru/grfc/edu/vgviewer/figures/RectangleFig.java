@@ -50,9 +50,9 @@ public class RectangleFig extends Figure {
     
     @Override
     public Map<String, Object> getFigureParameters(){
-        Map<String, Object> mapParams = super.getFigureParameters();
-        mapParams.put("width", this.width);      
-        mapParams.put("height", this.height);  
+        Map<String, Object> mapParams = super.getFigureParameters();                
+        mapParams.put("w", this.width);      
+        mapParams.put("h", this.height);  
         mapParams.put("name", getName());                
         return mapParams;
     }

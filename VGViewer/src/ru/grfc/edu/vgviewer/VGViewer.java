@@ -13,7 +13,9 @@ import java.util.logging.Logger;
 import ru.grfc.edu.vgviewer.figures.Figure;
 import ru.grfc.edu.vgviewer.figures.support.FigureEnum;
 import ru.grfc.edu.vgviewer.figures.support.FigureParams;
+import ru.grfc.edu.vgviewer.figures.support.FigureTextFileReaderWriter;
 import ru.grfc.edu.vgviewer.figures.support.NormalFigureWithStdLabelFactory;
+import ru.grfc.edu.vgviewer.figures.support.SimpleFigureTextFormatConverter;
 
 /**
  * Главный класс для запуска вьювера векторной графики
@@ -126,24 +128,17 @@ public class VGViewer {
         menuItemSaveText.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FileDialog fg = new FileDialog(f, "Save as text");
-                fg.setFile("out-text-fig.txt");
-                fg.setVisible(true);
-                String file = fg.getDirectory() + fg.getFile();
+                try {
+                    FileDialog fg = new FileDialog(f, "Save as text");
+                    fg.setFile("out-text-fig.txt");
+                    fg.setVisible(true);
+                    String file = fg.getDirectory() + fg.getFile();
 
-                try (FileWriter outputStream = new FileWriter(file);) {
-                    figuresToPrint.stream().forEach(fig -> {
-                        try {
-                            String outStr = "";
-                            FigureParams figureParams = new FigureParams(fig.getFigureParameters());
-                            System.out.println(figureParams.getPrintToFileStr());
-                            //outputStream.write(outStr);
-                        } catch (Exception ex) {
-                            Logger.getLogger(VGViewer.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    });
-
-                } catch (IOException ex) {
+                    NormalFigureWithStdLabelFactory figureFactory = new NormalFigureWithStdLabelFactory();
+                    SimpleFigureTextFormatConverter figureTextConverter = new SimpleFigureTextFormatConverter(figureFactory);
+                    FigureTextFileReaderWriter figuresWriter = new FigureTextFileReaderWriter(figureTextConverter);
+                    figuresWriter.saveFiguresToFile(file, figuresToPrint);
+                } catch (Exception ex) {
                     Logger.getLogger(VGViewer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -168,45 +163,69 @@ public class VGViewer {
         menuItemOpenText.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
-                
-                FileDialog fg = new FileDialog(f, "Open as text");
-                fg.setVisible(true);
-                String file = fg.getDirectory() + fg.getFile();
-            }
-        });
-        menuItemOpenSerial.addActionListener(new ActionListener() {
-            @Override            
-            public void actionPerformed(ActionEvent e) {
-                FileDialog fg = new FileDialog(f, "Open as serial");               
-                fg.setVisible(true);
-                String dataFile = fg.getDirectory() + fg.getFile();
-                
-                List<Figure> newFigList = new ArrayList<>();               
-                try ( FileInputStream fileInputStream = new FileInputStream(dataFile);
-                      BufferedInputStream buf = new BufferedInputStream(fileInputStream);                        
-                        ObjectInputStream in = new ObjectInputStream(buf);) {                                     
-                        while (true) {
-                            Figure fig = (Figure) in.readObject();       
-                            newFigList.add(fig);                            
-                        }                    
-                } catch (IOException ex) {
-                    Logger.getLogger(VGViewer.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(VGViewer.class.getName()).log(Level.SEVERE, null, ex);
-                } 
-                figuresToPrint.clear(); 
-                figuresToPrint.addAll(newFigList);
-                
-                if(figuresToPrint == null || figuresToPrint.isEmpty())
-                    return ;
-                EventQueue.invokeLater(new Runnable() {
+                try {
+                    FileDialog fg = new FileDialog(f, "Open as text");
+                    fg.setFile("out-text-fig.txt");
+                    fg.setVisible(true);
+                    String file = fg.getDirectory() + fg.getFile();
+
+                    NormalFigureWithStdLabelFactory figureFactory = new NormalFigureWithStdLabelFactory();
+                    SimpleFigureTextFormatConverter figureTextConverter = new SimpleFigureTextFormatConverter(figureFactory);
+                    FigureTextFileReaderWriter figuresReader = new FigureTextFileReaderWriter(figureTextConverter);
+                    List<Figure> newFiguresFromFile = figuresReader.loadFiguresFromFile(file);
+                    
+                    figuresToPrint.clear();
+                    figuresToPrint.addAll(newFiguresFromFile);                                        
+
+                    if (figuresToPrint == null || figuresToPrint.isEmpty()) {
+                        return;
+                    }
+                    EventQueue.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             canvas.setFigures(figuresToPrint);
                             canvas.repaint();
                         }
                     });
+
+                } catch (Exception ex) {
+                    Logger.getLogger(VGViewer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        menuItemOpenSerial.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FileDialog fg = new FileDialog(f, "Open as serial");
+                fg.setVisible(true);
+                String dataFile = fg.getDirectory() + fg.getFile();
+
+                List<Figure> newFigList = new ArrayList<>();
+                try (FileInputStream fileInputStream = new FileInputStream(dataFile);
+                        BufferedInputStream buf = new BufferedInputStream(fileInputStream);
+                        ObjectInputStream in = new ObjectInputStream(buf);) {
+                    while (true) {
+                        Figure fig = (Figure) in.readObject();
+                        newFigList.add(fig);
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(VGViewer.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(VGViewer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                figuresToPrint.clear();
+                figuresToPrint.addAll(newFigList);
+
+                if (figuresToPrint == null || figuresToPrint.isEmpty()) {
+                    return;
+                }
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        canvas.setFigures(figuresToPrint);
+                        canvas.repaint();
+                    }
+                });
             }
         });
 
@@ -215,8 +234,9 @@ public class VGViewer {
     }
 
     private FigureEnum getFigureEnumElement(String figureName) {
-        if(figureName == null || figureName.isEmpty())
+        if (figureName == null || figureName.isEmpty()) {
             return null;
+        }
         FigureEnum figureType = null;
         for (FigureEnum value : FigureEnum.values()) {
             if (value.equalsName(figureName)) {

@@ -5,15 +5,17 @@
  */
 package ru.grfc.edu.vgviewer.figures.support;
 
+import java.io.File;
+import java.util.List;
 import ru.grfc.edu.vgviewer.figures.Figure;
 
 /**
  *
  * @author gsv
  */
-interface FigureTextFormatConverter {
-    Figure figureFromTextLine(String strLine);
+interface FigureFileReaderWriter { 
+        
+    boolean saveFiguresToFile(String fileName, List<Figure> figures);  
     
-    String figureToTextLine(Figure figure) throws Exception;
-    
+    List<Figure> loadFiguresFromFile(String fileName);   
 }

@@ -3,6 +3,7 @@ package ru.grfc.edu.vgviewer.figures.support;
 import java.awt.Color;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,12 +35,11 @@ public class FigureParams {
     private Color color;
     private Coordinate firstPoint;
     private Coordinate lastPoint;
-    private String labelText;    
+    private String labelText;
+    private String name;
     
     private String printToFileStr;
 
-    
-    
     private FigureEnum figureType;
 
     public int getW() {
@@ -96,67 +96,37 @@ public class FigureParams {
 
     public String getLabelText() {
         return labelText;
-    }  
-    
+    }
+
     public FigureEnum getFigureType() {
         return figureType;
     }
-    
+
     public String getPrintToFileStr() {
         return printToFileStr;
     }
-                   
-    public FigureParams(Map<String, Object> mapParams) throws Exception{
+    
+    public String getName() {
+        return name;
+    }
+
+    public FigureParams(Map<String, Object> mapParams) throws Exception {
         FigureEnum figureType = (FigureEnum) mapParams.get("figureType");
-        if(figureType == null)
+        if (figureType == null) {
             throw new Exception("Didn't set figure type");
-        
+        }
+
+        // Устанавливаем всем приватным полям данного класса значения
         List<Field> allPrivateFields = getPrivateFields(FigureParams.class);
-        for (Map.Entry<String, Object> entry : mapParams.entrySet()) {           
+        for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
             Field field = null;
             try {
                 /*
                 if("label".equalsIgnoreCase(entry.getKey()))
                     field = getNeedField(allPrivateFields, "labelText");
                 else*/
-                    field = getNeedField(allPrivateFields, entry.getKey());               
+                field = getFieldByName(allPrivateFields, entry.getKey());
                 field.set(this, entry.getValue());
-            } catch (NoSuchFieldException ex) {
-                Logger.getLogger(FigureParams.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalArgumentException ex) {
-                Logger.getLogger(FigureParams.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
-                Logger.getLogger(FigureParams.class.getName()).log(Level.SEVERE, null, ex);
-            }                                                  
-        };        
-        
-        String needParamsStr = figureType.getTemplateToStr();
-        String[] keyValuePairs = needParamsStr.split(" ");
-        List<String> listParams = new ArrayList();
-        for (String pair : keyValuePairs) {
-            String[] entry = pair.split("=");
-            listParams.add(entry[0].trim());
-        }
-        
-        List params = new ArrayList();
-        for(String elem : listParams){
-            Field field = null;
-            try {
-                field = getNeedField(allPrivateFields, elem);
-                if("color".equalsIgnoreCase(elem)){
-                    Color color = (Color) field.get(this);
-                    String str = "rgb("+color.getRed()+ "," + color.getGreen()+ ","+ color.getBlue()+ ")";
-                    params.add(str);
-                }
-                else if("fill".equalsIgnoreCase(elem) || "blunt".equalsIgnoreCase(elem)){
-                    String str = (boolean) field.get(this) ? "true" : "false";
-                    params.add(str);
-                }
-                else if("label".equalsIgnoreCase(elem)){
-                    params.add(this.labelText == null ? "" : this.labelText );
-                }
-                else
-                    params.add(field.get(this));
             } catch (NoSuchFieldException ex) {
                 Logger.getLogger(FigureParams.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IllegalArgumentException ex) {
@@ -165,32 +135,73 @@ public class FigureParams {
                 Logger.getLogger(FigureParams.class.getName()).log(Level.SEVERE, null, ex);
             }
         };
-        this.printToFileStr = "";
-        if(listParams.contains("label") && listParams.size() != params.size()){
-            //listParams.add("label");
-            params.add("");
+
+        String needParamsStr = figureType.getTemplateToStr();
+        String[] keyValuePairs = needParamsStr.split(" ");
+        List<String> listParams = new ArrayList();
+        for (String pair : keyValuePairs) {
+            String[] entry = pair.split("=");
+            listParams.add(entry[0].trim());
         }
-        for(int i = 0; i < listParams.size(); i++){
+
+        List params = new ArrayList();
+        for (String elem : listParams) {
+            Field field = null;
+            try {
+                if ("label".equalsIgnoreCase(elem)) {
+                    params.add(this.labelText == null ? "" : this.labelText);
+                } else {
+                    field = getFieldByName(allPrivateFields, elem);
+
+                    if ("color".equalsIgnoreCase(elem)) {
+                        Color color = (Color) field.get(this);
+                        String str = "rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")";
+                        params.add(str);
+                    } else if ("fill".equalsIgnoreCase(elem) || "blunt".equalsIgnoreCase(elem)) {
+                        String str = (boolean) field.get(this) ? "true" : "false";
+                        params.add(str);
+                    } else {
+                        params.add(field.get(this));
+                    }
+                }
+            } catch (NoSuchFieldException ex) {
+                Logger.getLogger(FigureParams.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(FigureParams.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(FigureParams.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        };
+        this.printToFileStr = "";        
+        for (int i = 0; i < listParams.size(); i++) {
             this.printToFileStr = this.printToFileStr + " " + listParams.get(i) + "=" + params.get(i);
         }
-        
+
         this.printToFileStr = figureType.getShortName() + this.printToFileStr;//String.format(figureType.getTemplateToStr(), params.toArray());
     }
-    
+
     public FigureParams(FigureEnum figureType, String parametrs) throws Exception {
-        if(figureType == null)
+        if (figureType == null) {
             throw new Exception("Didn't set figure type");
+        }
         this.figureType = figureType;
         Pattern pattern = Pattern.compile(figureType.getRegExp(), Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(parametrs);
-        if (!matcher.matches()) 
-            throw new Exception("Can't parse parametrs string");
-        
+        if (!matcher.matches()) {
+            throw new Exception("Can't parse parametrs string: " + parametrs);
+        }
+
         String[] keyValuePairs = parametrs.split(" ");
         Map<String, String> mapParams = new HashMap<>();
         for (String pair : keyValuePairs) {
             String[] entry = pair.split("=");
-            mapParams.put(entry[0].trim(), entry[1].trim());
+            if (entry.length == 2) {
+                mapParams.put(entry[0].trim(), entry[1].trim());
+            } else if (entry.length == 1) {
+                mapParams.put(entry[0].trim(), "");
+            } else {
+                throw new Exception("Error parser values: " + Arrays.toString(entry));
+            }
         }
         try {
             w = Integer.valueOf(mapParams.get("w"));
@@ -233,8 +244,9 @@ public class FigureParams {
         } catch (Exception e) {
         }
         try {
-            if(mapParams.get("label") != null)
+            if (mapParams.get("label") != null) {
                 labelText = String.valueOf(mapParams.get("label"));
+            }
         } catch (Exception e) {
         }
         try {
@@ -287,15 +299,15 @@ public class FigureParams {
         }
         return result;
     }
-    
-    private Field getNeedField(List<Field> allFields, String fieldName) throws NoSuchFieldException {
+
+    private Field getFieldByName(List<Field> allFields, String fieldName) throws NoSuchFieldException {
         String internedName = fieldName.intern();
         for (int i = 0; i < allFields.size(); i++) {
             if (allFields.get(i).getName() == internedName) {
                 return allFields.get(i);
             }
         }
-        throw new NoSuchFieldException();
+        throw new NoSuchFieldException("fieldName = " + fieldName);
     }
-    
+
 }

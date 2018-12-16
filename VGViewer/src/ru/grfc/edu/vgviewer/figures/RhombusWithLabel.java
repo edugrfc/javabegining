@@ -26,7 +26,7 @@ public class RhombusWithLabel extends Rhombus {
     @Override
     public void draw(Graphics g) {
         super.draw(g);        
-        drawLabel(g, labelText, this.getFirstPoint().getX() + this.getWidth() + 10, this.getFirstPoint().getY() + this.getHeight() + 10);
+        drawLabel(g, labelText, this.getFirstPoint().getX() + this.getWidth() + 10, this.getFirstPoint().getY() + 10);
     }        
     
     private void drawLabel(Graphics g, String text, int x, int y) {

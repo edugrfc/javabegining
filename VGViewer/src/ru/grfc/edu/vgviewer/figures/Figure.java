@@ -2,15 +2,18 @@ package ru.grfc.edu.vgviewer.figures;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.Serializable;
 
 /**
  * Абстрактый класс фигуры
  *
- * @author dds
+ * @author chvl
  */
-abstract public class Figure {
+abstract public class Figure implements Serializable {
 
-    //начальная координата фигуры (левый верххний угол)
+    //начальная координата фигуры (левый верхний угол)
     Coordinate firstPoint;
 
     //цвет контура фигуры
@@ -19,10 +22,21 @@ abstract public class Figure {
     //наличие заливки
     boolean fill;
 
-    public Figure(Coordinate firstPoint, Color color, boolean fill) {
+    // Надпись
+    String text;
+
+    // Координата надписи
+    Coordinate textPoint;
+
+    public Figure(Coordinate firstPoint, Color color, boolean fill, String text, Coordinate textPoint) {
         this.firstPoint = firstPoint;
         this.color = color;
         this.fill = fill;
+        this.text = text;
+        this.textPoint = textPoint;
+    }
+
+    public Figure() {
     }
 
     public Coordinate getFirstPoint() {
@@ -33,10 +47,21 @@ abstract public class Figure {
         return color;
     }
 
-    //метод, который отрисовывает фигуру
+    public boolean isFill() {
+        return fill;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public Coordinate getTextPoint() {
+        return textPoint;
+    }
+
+//метод, который отрисовывает фигуру
     public abstract void draw(Graphics g);
 
     //имя фигуры
     public abstract String getName();
-
 }

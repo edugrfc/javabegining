@@ -1,22 +1,21 @@
 package ru.grfc.edu.vgviewer.figures;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Ромб
  *
  * Блок ветвления
  *
- * @author dds
+ * @author chvl
  */
 public class Rhombus extends Rectangle {
 
-    public Rhombus(int width, Coordinate firstPoint, Color color, boolean fill) {
+    public Rhombus(int width, Coordinate firstPoint, Color color, boolean fill, String text, Coordinate textPoint) {
         //у ромба стороны равны
-        super(width, width, firstPoint, color, fill);
+        super(width, width, firstPoint, color, fill, text, textPoint);
     }
 
     @Override
@@ -34,12 +33,12 @@ public class Rhombus extends Rectangle {
         } else {
             g.drawPolygon(xps, yps, 4);
         }
-
+        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        g.drawString(text, textPoint.getX(), textPoint.getY());
     }
 
     @Override
     public String getName() {
         return "Ромб";
     }
-
 }

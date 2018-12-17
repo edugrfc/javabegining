@@ -12,7 +12,7 @@ import ru.grfc.edu.vgviewer.figures.RoundRectangle;
 
 /**
  *
- * @author gsv
+ * @author chvl
  */
 public class NormalFigureFactory {
     private NormalFigureFactory(){};
@@ -30,17 +30,17 @@ public class NormalFigureFactory {
         }
         
         if (figureType == FigureEnum.ELLIPSE) {
-            return new Ellipse(params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new Ellipse(params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill(), params.getText(), params.getTextPoint());
         } else if (figureType == FigureEnum.LINE) {
-            return new Line(params.getFirstPoint(), params.getLastPoint(), params.getColor());
+            return new Line(params.getFirstPoint(), params.getLastPoint(), params.getColor(), params.getText(), params.getTextPoint());
         } else if (figureType == FigureEnum.PARALLELOGRAM) {
-            return new Parallelogram(params.isBlunt(), params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new Parallelogram(params.isBlunt(), params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill(), params.getText(), params.getTextPoint());
         } else if (figureType == FigureEnum.RECTANGLE) {
-            return new Rectangle(params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new Rectangle(params.getW(), params.getH(), params.getFirstPoint(), params.getColor(), params.isFill(), params.getText(), params.getTextPoint());
         } else if (figureType == FigureEnum.RHOMBUS) {
-            return new Rhombus(params.getW(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new Rhombus(params.getW(), params.getFirstPoint(), params.getColor(), params.isFill(), params.getText(), params.getTextPoint());
         } else if (figureType == FigureEnum.ROUND_RECTAGLE) {
-            return new RoundRectangle(params.getW(), params.getH(), params.getAw(), params.getAh(), params.getFirstPoint(), params.getColor(), params.isFill());
+            return new RoundRectangle(params.getW(), params.getH(), params.getAw(), params.getAh(), params.getFirstPoint(), params.getColor(), params.isFill(), params.getText(), params.getTextPoint());
         }
         return null;
     }

@@ -1,14 +1,17 @@
 package ru.grfc.edu.vgviewer.figures;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 
 /**
  * Прямоугольник с закругленными краями
  *
  * Блок-терминатор
  *
- * @author dds
+ * @author chvl
  */
 public class RoundRectangle extends Rectangle {
 
@@ -19,8 +22,8 @@ public class RoundRectangle extends Rectangle {
     private int arcHeight;
 
     public RoundRectangle(int width, int height, int arcWidth, int arcHeight,
-            Coordinate firstPoint, Color color, boolean fill) {
-        super(width, height, firstPoint, color, fill);
+            Coordinate firstPoint, Color color, boolean fill, String text, Coordinate textPoint) {
+        super(width, height, firstPoint, color, fill, text, textPoint);
         this.arcWidth = arcWidth;
         this.arcHeight = arcHeight;
     }
@@ -43,11 +46,12 @@ public class RoundRectangle extends Rectangle {
             g.drawRoundRect(firstPoint.getX(), firstPoint.getY(), width, height,
                     arcWidth, arcHeight);
         }
+        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        g.drawString(text, textPoint.getX(), textPoint.getY());
     }
 
     @Override
     public String getName() {
         return "Прямоугольник с закругленными краями";
     }
-
 }

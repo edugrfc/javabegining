@@ -1,22 +1,25 @@
 package ru.grfc.edu.vgviewer.figures;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 
 /**
  * Параллелограм
  *
  * Блок для ввода-вывода данных
  *
- * @author dds
+ * @author chvl
  */
 public class Parallelogram extends Rectangle {
 
     //тупой или острый левый верхний угол, true - тупой
     private boolean isBlunt;
 
-    public Parallelogram(boolean isBlunt, int width, int height, Coordinate firstPoint, Color color, boolean fill) {
-        super(width, height, firstPoint, color, fill);
+    public Parallelogram(boolean isBlunt, int width, int height, Coordinate firstPoint, Color color, boolean fill, String text, Coordinate textPoint) {
+        super(width, height, firstPoint, color, fill, text, textPoint);
         this.isBlunt = isBlunt;
     }
 
@@ -46,10 +49,13 @@ public class Parallelogram extends Rectangle {
         } else {
             g.drawPolygon(xps, yps, 4);
         }
+        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        g.drawString(text, textPoint.getX(), textPoint.getY());
     }
 
     @Override
     public String getName() {
         return "Параллелограм";
     }
+
 }

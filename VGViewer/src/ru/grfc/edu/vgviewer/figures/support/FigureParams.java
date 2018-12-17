@@ -120,11 +120,7 @@ public class FigureParams {
         List<Field> allPrivateFields = getPrivateFields(FigureParams.class);
         for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
             Field field = null;
-            try {
-                /*
-                if("label".equalsIgnoreCase(entry.getKey()))
-                    field = getNeedField(allPrivateFields, "labelText");
-                else*/
+            try {               
                 field = getFieldByName(allPrivateFields, entry.getKey());
                 field.set(this, entry.getValue());
             } catch (NoSuchFieldException ex) {

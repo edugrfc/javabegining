@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE notes SYSTEM "notes.dtd"-->
+<notes>
+    <note>
+        <to>Tove</to>
+        <from>Jani</from>
+        <heading>Reminder</heading>
+        <body>Don't forget me this weekend!</body>
+    </note>
+    <note>
+        <to>Grfc</to>
+        <from>Jani</from>
+        <heading>Reminder2</heading>
+        <body>Don't forget me this holiday</body>
+    </note>
+<!--    
+    <line >
+        <point></point>
+        <label x="111" y="222">text</label>
+    </line>-->
+</notes>

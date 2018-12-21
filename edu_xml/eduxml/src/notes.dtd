@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+    TODO define vocabulary identification
+    PUBLIC ID: -//vendor//vocabulary//EN
+    SYSTEM ID: http://server/path/notes.dtd
+
+-->
+
+<!--
+    An example how to use this DTD from your XML document:
+
+    <?xml version="1.0"?>
+
+    <!DOCTYPE notes SYSTEM "notes.dtd">
+
+    <notes>
+    ...
+    </notes>
+-->
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT notes (note)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT note (to|from|heading|body)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT to (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT from (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT heading (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT body (#PCDATA)>

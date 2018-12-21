@@ -29,6 +29,10 @@ public class FigureParams {
     private Color color;
     private Coordinate firstPoint;
     private Coordinate lastPoint;
+    private Coordinate textPoint;
+    private String text;
+    private int tx;
+    private int ty;
 
     public int getW() {
         return w;
@@ -82,6 +86,22 @@ public class FigureParams {
         return firstPoint;
     }
 
+    public Coordinate getTextPoint() {
+        return textPoint;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public int getTx() {
+        return tx;
+    }
+
+    public int getTy() {
+        return ty;
+    }
+
     public FigureParams(FigureEnum figureType, String parametrs) throws Exception {
         Pattern pattern = Pattern.compile(figureType.getRegExp(), Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(parametrs);
@@ -95,6 +115,11 @@ public class FigureParams {
             String[] entry = pair.split("=");
             mapParams.put(entry[0].trim(), entry[1].trim());
         }
+        try {
+            text = mapParams.get("text");
+        } catch (Exception e) {
+        }
+
         try {
             w = Integer.valueOf(mapParams.get("w"));
         } catch (Exception e) {
@@ -140,11 +165,25 @@ public class FigureParams {
             color = stringToColor(colorStr);
         } catch (Exception e) {
         }
+        try {
+            text = String.valueOf(mapParams.get("text"));
+        } catch (Exception e) {
+        }
+        try {
+            tx = Integer.valueOf(mapParams.get("tx"));
+        } catch (Exception e) {
+        }
+        try {
+            ty = Integer.valueOf(mapParams.get("ty"));
+        } catch (Exception e) {
+        }
+
         firstPoint = new Coordinate(fx, fy);
         lastPoint = new Coordinate(lx, ly);
+        textPoint = new Coordinate(tx, ty);
     }
 
-    private static Color stringToColor(final String value) {
+    public static Color stringToColor(final String value) {
         if (value == null || value.isEmpty()) {
             return Color.black;
         }

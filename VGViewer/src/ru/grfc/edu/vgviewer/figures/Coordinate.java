@@ -1,11 +1,13 @@
 package ru.grfc.edu.vgviewer.figures;
 
+import java.io.Serializable;
+
 /**
  * Класс координаты (x, y)
  *
  * @author dds
  */
-public class Coordinate {
+public class Coordinate implements Serializable {
 
     private int x;
     private int y;
@@ -33,5 +35,4 @@ public class Coordinate {
     public void setY(int y) {
         this.y = y;
     }
-
 }

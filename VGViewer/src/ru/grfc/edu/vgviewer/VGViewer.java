@@ -11,11 +11,29 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+import ru.grfc.edu.vgviewer.figures.Coordinate;
 import ru.grfc.edu.vgviewer.figures.Ellipse;
 import ru.grfc.edu.vgviewer.figures.Figure;
 import ru.grfc.edu.vgviewer.figures.Line;
@@ -258,39 +276,255 @@ public class VGViewer {
             }
         });
 
+        // Пункт меню "Open xml" для загрузки данных, сохраненных в xml файл
+        MenuItem oXml = new MenuItem("Open xml");
+        oXml.addActionListener(new ActionListener() {
+            long startTime = 0;
+            long endTime = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                class XMLHandler extends DefaultHandler {
+
+                    private String w, h, isFilled, fx, fy, px, py, color, text, tx, ty, lastElementName, figureParamStr;
+
+                    @Override
+                    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+                        switch (qName) {
+                            case ("line"):
+                                fx = attributes.getValue("x");
+                                fy = attributes.getValue("y");
+                                color = attributes.getValue("color");
+                            case ("rectangle"):
+                                w = attributes.getValue("width");
+                                h = attributes.getValue("height");
+                                isFilled = attributes.getValue("isFilled");
+                                color = attributes.getValue("color");
+                            case ("point"):
+                                px = attributes.getValue("x");
+                                py = attributes.getValue("y");
+                            case ("label"):
+                                tx = attributes.getValue("x");
+                                ty = attributes.getValue("y");
+                        }
+                        lastElementName = qName;
+                    }
+
+                    @Override
+                    public void characters(char[] ch, int start, int length) throws SAXException {
+                        if ("label".equals(lastElementName)) {
+                            String information = new String(ch, start, length);
+                            information = information.replace("\n", "").trim();
+                            text = information;
+                        }
+                        lastElementName = "";
+                    }
+
+                    @Override
+                    public void endElement(String uri, String localName,
+                            String qName) throws SAXException {
+                        if ("line".equals(qName)) {
+                            figureParamStr = "fx=" + fx + " fy=" + fy + " lx=" + px + " ly=" + py + " color=" + color
+                                    + " text=" + text + " tx=" + tx + " ty=" + ty;
+
+                            figuresToPrint.add(NormalFigureFactory.getFigure(FigureEnum.LINE, figureParamStr));
+                        }
+                        if ("rectangle".equals(qName)) {
+                            figureParamStr = "w=" + w + " h=" + h + " fx=" + px + " fy=" + py + " color=" + color
+                                    + " fill=" + isFilled + " text=" + text + " tx=" + tx + " ty=" + ty;
+                            figuresToPrint.add(NormalFigureFactory.getFigure(FigureEnum.RECTANGLE, figureParamStr));
+                        }
+                    }
+                }
+
+                JFileChooser fileopen = new JFileChooser();
+                File file = null;
+                int ret = fileopen.showDialog(null, "Открыть файл");
+                if (ret == JFileChooser.APPROVE_OPTION) {
+                    file = fileopen.getSelectedFile();
+                    SAXParserFactory factory = SAXParserFactory.newInstance();
+                    try {
+                        SAXParser parser = factory.newSAXParser();
+                        XMLHandler handler = new XMLHandler();
+                        figuresToPrint.clear();
+                        startTime = System.currentTimeMillis();
+                        parser.parse(file, handler);
+                        endTime = System.currentTimeMillis();
+                        if (figuresToPrint.size() > 1000) {
+                            JOptionPane.showMessageDialog(null, "Время чтения xml файла: " + (endTime - startTime) / 1000.0 + " c");
+                        }
+                    } catch (ParserConfigurationException | SAXException | IOException se) {
+                    }
+                    canvas.repaint();
+                }
+            }
+        });
+
+        // Пункт меню "Save xml" для сохранения данных в xml файл
+        MenuItem sXml = new MenuItem("Save xml");
+        sXml.addActionListener(new ActionListener() {
+            long startTime = 0;
+            long endTime = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileopen = new JFileChooser();
+                File file = null;
+                int ret = fileopen.showDialog(null, "Сохранить в файл");
+                if (ret == JFileChooser.APPROVE_OPTION) {
+                    file = fileopen.getSelectedFile();
+                    try {
+                        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                        Document doc = factory.newDocumentBuilder().newDocument();
+                        Element figures = doc.createElement("figures");
+                        doc.appendChild(figures);
+                        startTime = System.currentTimeMillis();
+                        for (Figure figure : figuresToPrint) {
+                            switch ((figure.getClass()).getSimpleName()) {
+                                case ("Line"):
+                                    Line figLine = (Line) figure;
+                                    Element line = doc.createElement("line");
+                                    line.setAttribute("x", String.valueOf(figLine.getFirstPoint().getX()));
+                                    line.setAttribute("y", String.valueOf(figLine.getFirstPoint().getY()));
+                                    line.setAttribute("color", "rgb(" + figLine.getColor().getRed() + "," + figLine.getColor().getGreen() + "," + figLine.getColor().getBlue() + ")");
+                                    figures.appendChild(line);
+                                    Element linePoint = doc.createElement("point");
+                                    linePoint.setAttribute("x", String.valueOf(figLine.getLastPoint().getX()));
+                                    linePoint.setAttribute("y", String.valueOf(figLine.getLastPoint().getY()));
+                                    line.appendChild(linePoint);
+                                    Element label = doc.createElement("label");
+                                    label.setAttribute("x", String.valueOf(figLine.getTextPoint().getX()));
+                                    label.setAttribute("y", String.valueOf(figLine.getTextPoint().getY()));
+                                    label.appendChild(doc.createTextNode(figLine.getText()));
+                                    line.appendChild(label);
+                                    break;
+                                case ("Rectangle"):
+                                    Rectangle figRectangle = (Rectangle) figure;
+                                    Element rectangle = doc.createElement("rectangle");
+                                    rectangle.setAttribute("width", String.valueOf(figRectangle.getWidth()));
+                                    rectangle.setAttribute("height", String.valueOf(figRectangle.getHeight()));
+                                    rectangle.setAttribute("isFilled", String.valueOf(figRectangle.isFill()));
+                                    rectangle.setAttribute("color", "rgb(" + figRectangle.getColor().getRed() + "," + figRectangle.getColor().getGreen() + "," + figRectangle.getColor().getBlue() + ")");
+                                    figures.appendChild(rectangle);
+                                    Element recPoint = doc.createElement("point");
+                                    recPoint.setAttribute("x", String.valueOf(figRectangle.getFirstPoint().getX()));
+                                    recPoint.setAttribute("y", String.valueOf(figRectangle.getFirstPoint().getY()));
+                                    rectangle.appendChild(recPoint);
+                                    Element recLabel = doc.createElement("label");
+                                    recLabel.setAttribute("x", String.valueOf(figRectangle.getTextPoint().getX()));
+                                    recLabel.setAttribute("y", String.valueOf(figRectangle.getTextPoint().getY()));
+                                    recLabel.appendChild(doc.createTextNode(figRectangle.getText()));
+                                    rectangle.appendChild(recLabel);
+                                    break;
+                            }
+                        }
+                        endTime = System.currentTimeMillis();
+                        if (figuresToPrint.size() > 0) {
+                            JOptionPane.showMessageDialog(null, "Время формирования xml файла: " + (endTime - startTime) / 1000.0 + " c");
+                        }
+                        try {
+                            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                            transformer.transform(new DOMSource(doc), new StreamResult(file));
+                        } catch (Exception ep) {
+
+                        }
+
+                    } catch (ParserConfigurationException pce) {
+
+                    }
+                }
+            }
+        });
+
+        // Пункт меню "To generate figures" для генерации фигур
+        MenuItem fGen = new MenuItem("To generate 20000 figures");
+        fGen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                figuresToPrint.clear();
+                Random random = new Random();
+
+                // Создадим 10000 линий и прямоугольников
+                for (int i = 0; i < 10000; i++) {
+                    Coordinate lineFirstPoint = new Coordinate(random.nextInt(f.getWidth() - 1), random.nextInt(f.getHeight() - 1));
+                    Coordinate lineLastPoint = new Coordinate(random.nextInt(f.getWidth() - 1), random.nextInt(f.getHeight() - 1));
+                    String text = "" + (i + 1);
+                    Coordinate lineTextPoint = new Coordinate(lineFirstPoint.getX() + 10, lineFirstPoint.getY());
+                    Line line = new Line(lineFirstPoint, lineLastPoint, Color.GREEN, text, lineTextPoint);
+                    figuresToPrint.add(line);
+                    int width = random.nextInt(150) + 20;
+                    int height = random.nextInt(150) + 20;
+                    Coordinate recFirstPoint = new Coordinate(random.nextInt(f.getWidth() - 1), random.nextInt(f.getHeight() - 1));
+                    Coordinate recTextPoint = new Coordinate(recFirstPoint.getX() + 10, recFirstPoint.getY());
+                    Rectangle rectangle = new Rectangle(width, height, recFirstPoint, Color.RED, false, text, recTextPoint);
+                    figuresToPrint.add(rectangle);
+                }
+                canvas.repaint();
+            }
+        });
+
         fileMenu.add(oSer);
+
         fileMenu.add(sSer);
+
         fileMenu.add(oTxt);
+
         fileMenu.add(sTxt);
+
+        fileMenu.add(oXml);
+
+        fileMenu.add(sXml);
+
+        fileMenu.add(fGen);
+
         mbar.add(fileMenu);
+
         f.setMenuBar(mbar);
 
         Panel topLeftPanel = new Panel();
-        topLeftPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        topLeftPanel.setLayout(
+                new FlowLayout(FlowLayout.LEFT));
         topLeftPanel.add(choiceFigureLabel);
+
         topLeftPanel.add(choiceFigure);
+
         topLeftPanel.add(imputParamTextField);
 
         Panel topRigthPanel = new Panel();
-        topRigthPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+        topRigthPanel.setLayout(
+                new FlowLayout(FlowLayout.RIGHT));
         topRigthPanel.add(addFigureButton);
 
         Panel topPanel = new Panel();
-        topPanel.setLayout(new BorderLayout());
+
+        topPanel.setLayout(
+                new BorderLayout());
         topPanel.add(topLeftPanel, BorderLayout.WEST);
+
         topPanel.add(topRigthPanel, BorderLayout.EAST);
 
         f.add(topPanel, BorderLayout.NORTH);
+
         f.add(canvas, BorderLayout.CENTER);
-        f.setSize(800, 500);
-        f.setVisible(true);
+
+        f.setSize(
+                800, 500);
+        f.setVisible(
+                true);
     }
 
-    private FigureEnum getFigureEnumElement(String figureName) {
+    private FigureEnum
+            getFigureEnumElement(String figureName) {
         FigureEnum figureEnum = null;
+
         for (FigureEnum value : FigureEnum.values()) {
             if (value.equalsName(figureName)) {
                 figureEnum = value;
+
             }
         }
         return figureEnum;

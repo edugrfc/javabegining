@@ -25,6 +25,7 @@ import ru.grfc.edu.vgviewer.figures.Rhombus;
 import ru.grfc.edu.vgviewer.figures.RoundRectangle;
 import ru.grfc.edu.vgviewer.figures.support.FigureEnum;
 import ru.grfc.edu.vgviewer.figures.support.NormalFigureFactory;
+import ru.grfc.edu.vgviewer.xml.*;
 
 /**
  * Главный класс для запуска вьювера векторной графики
@@ -258,10 +259,61 @@ public class VGViewer {
             }
         });
 
+        MenuItem sXml = new MenuItem("Save XML");
+        sXml.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileopen = new JFileChooser();
+                File file = null;
+                int ret = fileopen.showDialog(null, "Сохранить в файл");
+                if (ret == JFileChooser.APPROVE_OPTION) {
+                    file = fileopen.getSelectedFile();
+                    try {
+                        DomWriter write = new DomWriter(file, figuresToPrint);
+                    } catch (Exception ex) {
+                           System.out.println(ex.getMessage());
+                    }
+                }
+            }
+        });
+        MenuItem oXml = new MenuItem("Open XML");
+        oXml.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileopen = new JFileChooser();
+                File file = null;
+                int ret = fileopen.showDialog(null, "Открыть");
+                if (ret == JFileChooser.APPROVE_OPTION) {
+                    file = fileopen.getSelectedFile();
+                    try {
+                        SaxReader read = new SaxReader(file.getAbsolutePath(), figuresToPrint);
+                        canvas.repaint();
+                    } catch (Exception ex) {
+                        System.out.println("Исключение " + ex);
+                    }
+                }
+            }
+        });
+
+        MenuItem clear = new MenuItem("Clear");
+        clear.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+                figuresToPrint.clear();
+                canvas.repaint();
+
+            }
+
+        });
+
         fileMenu.add(oSer);
         fileMenu.add(sSer);
         fileMenu.add(oTxt);
         fileMenu.add(sTxt);
+        fileMenu.add(oXml);
+        fileMenu.add(sXml);
+        fileMenu.add(clear);
         mbar.add(fileMenu);
         f.setMenuBar(mbar);
 

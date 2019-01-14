@@ -46,13 +46,13 @@ public class EduDom implements ErrorHandler {
     public List<Note> notes = new ArrayList<Note>();
 
     public static void main(String[] args) throws Exception {
-        String filename = "notes.xml";
+        String filename = "src/notes.xml";
 
         EduDom eduDom = new EduDom();
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         //dbf.setNamespaceAware(true);
-        dbf.setValidating(true);
+        //dbf.setValidating(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
         db.setErrorHandler(eduDom);
 

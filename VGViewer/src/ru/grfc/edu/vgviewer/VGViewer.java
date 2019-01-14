@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Random;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -30,6 +31,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -165,7 +169,7 @@ public class VGViewer {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileopen = new JFileChooser();
-                File file = null;
+                File file;
                 int ret = fileopen.showDialog(null, "Открыть файл");
                 if (ret == JFileChooser.APPROVE_OPTION) {
                     file = fileopen.getSelectedFile();
@@ -212,7 +216,7 @@ public class VGViewer {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileopen = new JFileChooser();
-                File file = null;
+                File file;
                 int ret = fileopen.showDialog(null, "Сохранить в файл");
                 if (ret == JFileChooser.APPROVE_OPTION) {
                     file = fileopen.getSelectedFile();
@@ -276,9 +280,9 @@ public class VGViewer {
             }
         });
 
-        // Пункт меню "Open xml" для загрузки данных, сохраненных в xml файл
-        MenuItem oXml = new MenuItem("Open xml");
-        oXml.addActionListener(new ActionListener() {
+        // Пункт меню "Open xml with SAX" для загрузки данных, сохраненных в xml файл
+        MenuItem oXmlSax = new MenuItem("Open xml with SAX");
+        oXmlSax.addActionListener(new ActionListener() {
             long startTime = 0;
             long endTime = 0;
 
@@ -295,14 +299,17 @@ public class VGViewer {
                                 fx = attributes.getValue("x");
                                 fy = attributes.getValue("y");
                                 color = attributes.getValue("color");
+                                break;
                             case ("rectangle"):
                                 w = attributes.getValue("width");
                                 h = attributes.getValue("height");
                                 isFilled = attributes.getValue("isFilled");
                                 color = attributes.getValue("color");
+                                break;
                             case ("point"):
                                 px = attributes.getValue("x");
                                 py = attributes.getValue("y");
+                                break;
                             case ("label"):
                                 tx = attributes.getValue("x");
                                 ty = attributes.getValue("y");
@@ -338,12 +345,12 @@ public class VGViewer {
                 }
 
                 JFileChooser fileopen = new JFileChooser();
-                File file = null;
+                File file;
                 int ret = fileopen.showDialog(null, "Открыть файл");
                 if (ret == JFileChooser.APPROVE_OPTION) {
                     file = fileopen.getSelectedFile();
-                    SAXParserFactory factory = SAXParserFactory.newInstance();
                     try {
+                        SAXParserFactory factory = SAXParserFactory.newInstance();
                         SAXParser parser = factory.newSAXParser();
                         XMLHandler handler = new XMLHandler();
                         figuresToPrint.clear();
@@ -360,8 +367,109 @@ public class VGViewer {
             }
         });
 
+        // Пункт меню "Open xml with DOM" для загрузки данных, сохраненных в xml файл
+        MenuItem oXmlDom = new MenuItem("Open xml with DOM");
+        oXmlDom.addActionListener(new ActionListener() {
+            long startTime = 0;
+            long endTime = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                JFileChooser fileopen = new JFileChooser();
+                File file;
+                int ret = fileopen.showDialog(null, "Открыть файл");
+                if (ret == JFileChooser.APPROVE_OPTION) {
+                    file = fileopen.getSelectedFile();
+
+                    try {
+                        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                        DocumentBuilder builder = factory.newDocumentBuilder();
+                        figuresToPrint.clear();
+                        startTime = System.currentTimeMillis();
+                        Document document = builder.parse(file);
+                        String figureParamStr, w, h, color, fx, fy, isFilled;
+                        String px = null;
+                        String py = null;
+                        String text = null;
+                        String tx = null;
+                        String ty = null;
+
+                        // Получение списка всех элементов line внутри корневого элемента
+                        NodeList lineElements = document.getDocumentElement().getElementsByTagName("line");
+
+                        for (int i = 0; i < lineElements.getLength(); i++) {
+                            Node line = lineElements.item(i);
+                            NamedNodeMap lineAttributes = line.getAttributes();
+                            fx = lineAttributes.getNamedItem("x").getNodeValue();
+                            fy = lineAttributes.getNamedItem("y").getNodeValue();
+                            color = lineAttributes.getNamedItem("color").getNodeValue();
+                            for (int j = 0; j < line.getChildNodes().getLength(); j++) {
+                                switch (line.getChildNodes().item(j).getNodeName()) {
+                                    case ("point"):
+                                        NamedNodeMap pointAttributes = line.getChildNodes().item(j).getAttributes();
+                                        px = pointAttributes.getNamedItem("x").getNodeValue();
+                                        py = pointAttributes.getNamedItem("y").getNodeValue();
+                                        break;
+                                    case ("label"):
+                                        NamedNodeMap labelAttributes = line.getChildNodes().item(j).getAttributes();
+                                        tx = labelAttributes.getNamedItem("x").getNodeValue();
+                                        ty = labelAttributes.getNamedItem("y").getNodeValue();
+                                        text = line.getChildNodes().item(j).getTextContent();
+                                        break;
+                                }
+
+                            }
+                            figureParamStr = "fx=" + fx + " fy=" + fy + " lx=" + px + " ly=" + py + " color=" + color
+                                    + " text=" + text + " tx=" + tx + " ty=" + ty;
+
+                            figuresToPrint.add(NormalFigureFactory.getFigure(FigureEnum.LINE, figureParamStr));
+                        }
+
+                        // Получение списка всех элементов rectangle внутри корневого элемента
+                        NodeList recElements = document.getDocumentElement().getElementsByTagName("rectangle");
+                        for (int i = 0; i < recElements.getLength(); i++) {
+                            Node rec = recElements.item(i);
+                            NamedNodeMap recAttributes = rec.getAttributes();
+                            w = recAttributes.getNamedItem("width").getNodeValue();
+                            h = recAttributes.getNamedItem("height").getNodeValue();
+                            isFilled = recAttributes.getNamedItem("isFilled").getNodeValue();
+                            color = recAttributes.getNamedItem("color").getNodeValue();
+                            for (int j = 0; j < rec.getChildNodes().getLength(); j++) {
+                                switch (rec.getChildNodes().item(j).getNodeName()) {
+                                    case ("point"):
+                                        NamedNodeMap pointAttributes = rec.getChildNodes().item(j).getAttributes();
+                                        px = pointAttributes.getNamedItem("x").getNodeValue();
+                                        py = pointAttributes.getNamedItem("y").getNodeValue();
+                                        break;
+                                    case ("label"):
+                                        NamedNodeMap labelAttributes = rec.getChildNodes().item(j).getAttributes();
+                                        tx = labelAttributes.getNamedItem("x").getNodeValue();
+                                        ty = labelAttributes.getNamedItem("y").getNodeValue();
+                                        text = rec.getChildNodes().item(j).getTextContent();
+                                        break;
+                                }
+
+                            }
+                            figureParamStr = "w=" + w + " h=" + h + " fx=" + px + " fy=" + py + " color=" + color
+                                    + " fill=" + isFilled + " text=" + text + " tx=" + tx + " ty=" + ty;
+                            figuresToPrint.add(NormalFigureFactory.getFigure(FigureEnum.RECTANGLE, figureParamStr));
+                        }
+                        endTime = System.currentTimeMillis();
+                        if (figuresToPrint.size() > 1000) {
+                            JOptionPane.showMessageDialog(null, "Время чтения xml файла: " + (endTime - startTime) / 1000.0 + " c");
+                        }
+                    } catch (ParserConfigurationException | SAXException | IOException se) {
+                    }
+                    canvas.repaint();
+                }
+            }
+        }
+        );
+
         // Пункт меню "Save xml" для сохранения данных в xml файл
         MenuItem sXml = new MenuItem("Save xml");
+
         sXml.addActionListener(new ActionListener() {
             long startTime = 0;
             long endTime = 0;
@@ -378,7 +486,6 @@ public class VGViewer {
                         Document doc = factory.newDocumentBuilder().newDocument();
                         Element figures = doc.createElement("figures");
                         doc.appendChild(figures);
-                        startTime = System.currentTimeMillis();
                         for (Figure figure : figuresToPrint) {
                             switch ((figure.getClass()).getSimpleName()) {
                                 case ("Line"):
@@ -418,10 +525,6 @@ public class VGViewer {
                                     break;
                             }
                         }
-                        endTime = System.currentTimeMillis();
-                        if (figuresToPrint.size() > 0) {
-                            JOptionPane.showMessageDialog(null, "Время формирования xml файла: " + (endTime - startTime) / 1000.0 + " c");
-                        }
                         try {
                             Transformer transformer = TransformerFactory.newInstance().newTransformer();
                             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -440,6 +543,7 @@ public class VGViewer {
         // Пункт меню "To generate figures" для генерации фигур
         MenuItem fGen = new MenuItem("To generate 20000 figures");
         fGen.addActionListener(new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -463,68 +567,43 @@ public class VGViewer {
                 }
                 canvas.repaint();
             }
-        });
+        }
+        );
 
         fileMenu.add(oSer);
-
         fileMenu.add(sSer);
-
         fileMenu.add(oTxt);
-
         fileMenu.add(sTxt);
-
-        fileMenu.add(oXml);
-
+        fileMenu.add(oXmlSax);
+        fileMenu.add(oXmlDom);
         fileMenu.add(sXml);
-
         fileMenu.add(fGen);
-
         mbar.add(fileMenu);
-
         f.setMenuBar(mbar);
-
         Panel topLeftPanel = new Panel();
-
-        topLeftPanel.setLayout(
-                new FlowLayout(FlowLayout.LEFT));
+        topLeftPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         topLeftPanel.add(choiceFigureLabel);
-
         topLeftPanel.add(choiceFigure);
-
         topLeftPanel.add(imputParamTextField);
-
         Panel topRigthPanel = new Panel();
-
-        topRigthPanel.setLayout(
-                new FlowLayout(FlowLayout.RIGHT));
+        topRigthPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         topRigthPanel.add(addFigureButton);
-
         Panel topPanel = new Panel();
-
-        topPanel.setLayout(
-                new BorderLayout());
+        topPanel.setLayout(new BorderLayout());
         topPanel.add(topLeftPanel, BorderLayout.WEST);
-
         topPanel.add(topRigthPanel, BorderLayout.EAST);
-
         f.add(topPanel, BorderLayout.NORTH);
-
         f.add(canvas, BorderLayout.CENTER);
-
-        f.setSize(
-                800, 500);
-        f.setVisible(
-                true);
+        f.setSize(800, 500);
+        f.setVisible(true);
     }
 
     private FigureEnum
             getFigureEnumElement(String figureName) {
         FigureEnum figureEnum = null;
-
         for (FigureEnum value : FigureEnum.values()) {
             if (value.equalsName(figureName)) {
                 figureEnum = value;
-
             }
         }
         return figureEnum;
